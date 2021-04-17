@@ -23,23 +23,33 @@ client.connect(err => {
     // Add services
     app.post('/addServices', (req, res) => {
         const services = req.body;
-        console.log(services);
         servicesCollection.insertOne(services)
             .then(results => {
                 res.send(results.insertedCount > 0)
-
-                console.log("🚀 ~ file: index.js ~ line 29 ~ app.post ~ results", results)
             })
     })
 
-    // Read services data
+    // Read services
     app.get('/services', (req, res) => {
         servicesCollection.find({})
             .toArray((err, services) => {
                 res.send(services)
-                console.log(err);
             })
     })
+
+    // Delete service
+    app.delete('/deleteService/:id', (req, res) => {
+        const id = req.params.id;
+        console.log("🚀 ~ file: index.js ~ line 45 ~ app.delete ~ id", id)
+
+        servicesCollection.findOneAndDelete({ _id: ObjectId(id) })
+            .then(results => {
+                console.log("🚀 ~ file: index.js ~ line 48 ~ app.delete ~ results", results)
+
+                res.send(results.deleCount > 0)
+            })
+    })
+
 
 
 });
