@@ -70,7 +70,8 @@ client.connect(err => {
 
     // Read serviceOrder
     app.get('/serviceOrder', (req, res) => {
-        serviceOrderCollection.find({})
+        console.log(req.query);
+        serviceOrderCollection.find(req.query)
             .toArray((err, serviceOrder) => {
                 res.send(serviceOrder)
             })
@@ -99,6 +100,16 @@ client.connect(err => {
         reviewCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
+            })
+    })
+
+    // Is Admin
+    app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        console.log(email);
+        adminCollection.find({ email: email })
+            .toArray((err, admin) => {
+                res.send(admin.length > 0);
             })
     })
 
