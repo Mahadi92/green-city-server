@@ -19,6 +19,7 @@ client.connect(err => {
     const treesCollection = client.db("greenCity").collection("trees");
     const servicesCollection = client.db("greenCity").collection("services");
     const serviceOrderCollection = client.db("greenCity").collection("serviceOrder");
+    const adminCollection = client.db("greenCity").collection("admin");
 
 
     // Add services
@@ -73,6 +74,15 @@ client.connect(err => {
         serviceOrderCollection.find({})
             .toArray((err, serviceOrder) => {
                 res.send(serviceOrder)
+            })
+    })
+
+    // Add Admin
+    app.post('/addAdmin', (req, res) => {
+        const admin = req.body;
+        adminCollection.insertOne(admin)
+            .then(results => {
+                res.send(results.insertedCount > 0)
             })
     })
 
