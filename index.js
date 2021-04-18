@@ -20,6 +20,7 @@ client.connect(err => {
     const servicesCollection = client.db("greenCity").collection("services");
     const serviceOrderCollection = client.db("greenCity").collection("serviceOrder");
     const adminCollection = client.db("greenCity").collection("admin");
+    const reviewCollection = client.db("greenCity").collection("reviews");
 
 
     // Add services
@@ -44,8 +45,6 @@ client.connect(err => {
         const id = req.params.id;
         servicesCollection.findOneAndDelete({ _id: ObjectId(id) })
             .then(results => {
-                console.log("🚀 ~ file: index.js ~ line 48 ~ app.delete ~ results", results)
-
                 res.send(results.deleCount > 0)
             })
     })
@@ -83,6 +82,23 @@ client.connect(err => {
         adminCollection.insertOne(admin)
             .then(results => {
                 res.send(results.insertedCount > 0)
+            })
+    })
+
+    // Add Review
+    app.post('/addReview', (req, res) => {
+        const rating = req.body;
+        reviewCollection.insertOne(rating)
+            .then(results => {
+                res.send(results.insertedCount > 0)
+            })
+    })
+
+    // Read Review
+    app.get('/reviews', (req, res) => {
+        reviewCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents)
             })
     })
 
