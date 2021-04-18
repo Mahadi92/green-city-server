@@ -18,6 +18,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     const treesCollection = client.db("greenCity").collection("trees");
     const servicesCollection = client.db("greenCity").collection("services");
+    const serviceOrderCollection = client.db("greenCity").collection("serviceOrder");
 
 
     // Add services
@@ -40,8 +41,6 @@ client.connect(err => {
     // Delete service
     app.delete('/deleteService/:id', (req, res) => {
         const id = req.params.id;
-        console.log("🚀 ~ file: index.js ~ line 45 ~ app.delete ~ id", id)
-
         servicesCollection.findOneAndDelete({ _id: ObjectId(id) })
             .then(results => {
                 console.log("🚀 ~ file: index.js ~ line 48 ~ app.delete ~ results", results)
@@ -50,11 +49,35 @@ client.connect(err => {
             })
     })
 
+    // Find by id
+    app.get('/service/:id', (req, res) => {
+        const id = req.params.id;
+        servicesCollection.find({ _id: ObjectId(id) })
+            .toArray((err, documents) => {
+                res.send(documents[0]);
+            })
+    })
+
+
+    // Add Service Order
+    app.post('/addServiceOrder', (req, res) => {
+        const serviceOrder = req.body;
+        serviceOrderCollection.insertOne(serviceOrder)
+            .then(results => {
+                res.send(results.insertedCount > 0)
+            })
+    })
+
+    // Read serviceOrder
+    app.get('/serviceOrder', (req, res) => {
+        serviceOrderCollection.find({})
+            .toArray((err, serviceOrder) => {
+                res.send(serviceOrder)
+            })
+    })
 
 
 });
-
-
 
 app.get('/', function (req, res) {
     res.send('Welcome to Green City server')
